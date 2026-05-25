@@ -31,7 +31,7 @@ fall back to reading from the environment when running locally.
 
 ## Repository layout
 
-```
+```text
 Chapter 1/        First-principles labs (Hanane)
 Chapter 2/        Memory and tool patterns (Hanane)
 Chapter 3/        Framework comparison — one lab per framework
@@ -44,10 +44,10 @@ Chapter 9/        Insurance workflows (claims, fraud, underwriting)
 ## Provider keys at a glance
 
 | Key | Required by |
-|---|---|
+| --- | --- |
 | `OPENAI_API_KEY` | Ch 1, 2, 3, 5, 7, 9 (most labs) |
-| `CLAUDE_API_KEY` / `ANTHROPIC_API_KEY` | Ch 1 Lab 1, Ch 3 Lab 7 |
-| `GEMINI_API_KEY` / `GOOGLE_API_KEY` | Ch 1 Lab 1, Ch 3 Lab 2 |
+| `ANTHROPIC_API_KEY` | Ch 1 Lab 1, Ch 3 Lab 7 |
+| `GOOGLE_API_KEY` | Ch 1 Lab 1, Ch 3 Lab 2 |
 | `MISTRAL_API_KEY` | Ch 3 Lab 8 |
 | `NEWS_API_KEY` | Ch 1 Lab 3 |
 | `FINANCIAL_MODELING_PREP_API_KEY` | Ch 2 Labs 1 and 6 |
