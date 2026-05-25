@@ -168,6 +168,64 @@ STUB_FUNDAMENTALS = {
             "ebitda": 35_583_000_000, "EPS": 12.96, "EPS_diluted": 12.86,
         },
     },
+    "GOOGL": {
+        "profitability": {
+            "Return on Assets": 0.22,
+            "Return on Equity": 0.30,
+            "Net Profit Margin": 0.27,
+            "Gross Margin": 0.57,
+        },
+        "liquidity": {
+            "Current Ratio": 2.10,
+            "Quick Ratio": 2.06,
+            "Debt-to-Equity Ratio": 0.10,
+            "Interest Coverage Ratio": 87.50,
+        },
+        "stock_price": {
+            "symbol": "GOOGL", "price": 168.40, "volume": 27_000_000,
+            "priceAvg50": 162.50, "priceAvg200": 152.30,
+            "eps": 7.54, "pe": 22.3, "earningsAnnouncement": "2026-07-23",
+        },
+        "company": {
+            "companyName": "Alphabet Inc.", "industry": "Internet Content & Information",
+            "sector": "Communication Services", "mktCap": 2_080_000_000_000,
+        },
+        "income": {
+            "date": "2025-12-31", "revenue": 350_018_000_000,
+            "gross_profit": 199_510_000_000, "net_income": 100_118_000_000,
+            "ebitda": 134_276_000_000, "EPS": 7.54, "EPS_diluted": 7.40,
+        },
+    },
+    "JPM": {
+        "profitability": {
+            "Return on Assets": 0.014,
+            "Return on Equity": 0.17,
+            "Net Profit Margin": 0.36,
+            "Gross Margin": 1.00,  # Banks report differently; gross margin is conventionally ~1.
+        },
+        "liquidity": {
+            "Current Ratio": 1.00,  # Banks use different liquidity metrics; this is a placeholder.
+            "Quick Ratio":   1.00,
+            "Debt-to-Equity Ratio": 1.40,
+            "Interest Coverage Ratio": 4.50,
+        },
+        "stock_price": {
+            "symbol": "JPM", "price": 198.70, "volume": 11_000_000,
+            "priceAvg50": 194.00, "priceAvg200": 185.50,
+            "eps": 16.23, "pe": 12.2, "earningsAnnouncement": "2026-07-15",
+        },
+        "company": {
+            "companyName": "JPMorgan Chase & Co.", "industry": "Banks—Diversified",
+            "sector": "Financial Services", "mktCap": 568_000_000_000,
+        },
+        "income": {
+            "date": "2025-12-31", "revenue": 158_104_000_000,
+            "gross_profit": 158_104_000_000,  # No COGS for banks.
+            "net_income": 49_552_000_000,
+            "ebitda": 0,  # Not meaningful for banks.
+            "EPS": 16.23, "EPS_diluted": 16.07,
+        },
+    },
 }
 
 
