@@ -1,0 +1,6 @@
+openai-agents>=0.0.7
+yfinance>=0.2.54
+requests>=2.32.0
+python-dotenv>=1.0.0
+pandas>=2.2.0
+numpy>=1.26.0

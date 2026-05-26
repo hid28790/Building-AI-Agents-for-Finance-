@@ -1,0 +1,11 @@
+# Virtual environments
+.venv/
+venv/
+
+# Environment / secrets
+.env
+
+# Logs and run artifacts
+logs/
+working_memory.txt
+*.log

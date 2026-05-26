@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:\\\\Users\\\\hndup\\\\Documents\\\\Repos\\\\Book\\\\Reasoning\\\\labs\\\\lats\\\\.venv\\\\Scripts\\\\python.exe\" -m py_compile \"C:\\\\Users\\\\hndup\\\\Documents\\\\Repos\\\\Book\\\\Reasoning\\\\labs\\\\lats\\\\lats_search.py\")",
+      "Bash(\"C:\\\\Users\\\\hndup\\\\Documents\\\\Repos\\\\Book\\\\Reasoning\\\\labs\\\\lats\\\\.venv\\\\Scripts\\\\python.exe\" -m py_compile \"C:\\\\Users\\\\hndup\\\\Documents\\\\Repos\\\\Book\\\\Reasoning\\\\labs\\\\lats\\\\lats_helpers.py\" \"C:\\\\Users\\\\hndup\\\\Documents\\\\Repos\\\\Book\\\\Reasoning\\\\labs\\\\lats\\\\lats_search.py\")",
+      "Bash(C:\\\\Users\\\\hndup\\\\Documents\\\\Repos\\\\Book\\\\Reasoning\\\\labs\\\\lats\\\\.venv\\\\Scripts\\\\python.exe *)"
+    ]
+  }
+}
