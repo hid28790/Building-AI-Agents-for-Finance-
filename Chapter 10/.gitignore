@@ -1,0 +1,9 @@
+# Local virtual environment
+.venv/
+
+# Real API keys — never commit; use .env.example as the template
+.env
+
+# Python build artifacts
+__pycache__/
+*.pyc

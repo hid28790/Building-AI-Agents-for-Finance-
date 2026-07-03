@@ -1,0 +1,10 @@
+# LlamaIndex 0.14 line. The anthropic wrapper >=0.11 knows claude-sonnet-4-6
+# natively (its model registry includes it), so no client-side model
+# registration is needed. core 0.14 ships the agent/question-generation
+# functionality that the deprecated llama-index-*-openai helper packages used to
+# provide, so those are no longer required.
+llama-index-core>=0.14.5
+llama-index-llms-anthropic>=0.11.0
+llama-index-embeddings-openai>=0.6.0
+llama-index-retrievers-bm25>=0.7.0
+python-dotenv>=1.0.0

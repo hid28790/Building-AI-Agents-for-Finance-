@@ -1,0 +1,436 @@
+# Step 6 — Self-correcting agent
+
+_A FunctionAgent calls the document tools, judges whether it has both the figure and the threshold, and re-queries when it does not._
+
+## Task: Can we open a new long position in Acme Robotics under the firm's liquidity policy? Check the quick-ratio rule against Acme's most recent disclosed quick ratio.
+
+### Retrieved context (3 chunk(s))
+
+**Chunk 1** — source `firm_risk_policy.md`, score 0.592
+
+> # Birchwood Asset Management — Counterparty & Liquidity Risk Policy (Excerpt)
+> 
+> > *Synthetic internal policy document created for the Agentic RAG lab. Birchwood
+> > Asset Management is a fictional firm; thresholds are illustrative and not
+> > investment advice.*
+> 
+> **Policy ID:** RISK-LIQ-007
+> **Owner:** Office of the Chief Risk Officer
+> **Last reviewed:** March 2025
+> 
+> ## 1. Purpose
+> 
+> This policy defines the minimum liquidity standards that an issuer must satisfy
+> before the firm may hold a long position in its equity or unsecured debt. It applies
+> to all actively managed portfolios.
+> 
+> ## 2. Liquidity thresholds
+> 
+> For any issuer classified as **non-financial corporate**, the analyst must verify,
+> using the issuer's most recent annual report, that:
+> 
+> - **Current ratio ≥ 1.50.** Issuers with a current ratio below 1.50 require a
+>   documented exception approved by the Risk Committee.
+> - **Quick ratio ≥ 1.00.** A quick ratio below 1.00 is a **hard block**: no new long
+>   position may be opened regardless of other factors.
+> - **Net-debt-to-EBITDA ≤ 3.5x.**
+> 
+> ## 3. Covenant awareness
+> 
+> Where an issuer discloses financial covenants on its credit facilities, the analyst
+> must record the covenant thresholds and confirm the issuer's current headroom.
+> Approaching a covenant (within 10% of the threshold) must be flagged in the position
+> memo even if the policy thresholds above are met.
+> 
+> ## 4. Concentration
+> 
+> No single issuer may exceed **5% of portfolio net asset value** at cost. Issuers
+> whose own customer concentration exceeds 40% of revenue are flagged as
+> **elevated single-name risk** and are capped at **3% of NAV**.
+> 
+> ## 5. Documentation
+> 
+> Every position memo must cite the specific figures used to evaluate Sections 2–4 and
+> name the source document and reporting period. Unsupported assertions are not
+> acceptable; if a required figure cannot be found in the issuer's disclosures, the
+> analyst must state that explicitly rather than estimate.
+
+**Chunk 2** — source `acme_earnings_call_q3.md`, score 0.538
+
+> # Acme Robotics, Inc. — Q3 Fiscal 2024 Earnings Call Transcript (Excerpt)
+> 
+> > *Synthetic transcript created for the Agentic RAG lab. Acme Robotics, Inc. is a
+> > fictional company; quotes are illustrative.*
+> 
+> **Date:** October 24, 2024
+> **Participants:** Jordan Ellis (Chief Executive Officer), Priya Nair (Chief
+> Financial Officer), and analysts.
+> 
+> ---
+> 
+> **Operator:** Good afternoon, and welcome to Acme Robotics' third-quarter fiscal
+> 2024 earnings call. I will now turn the call over to CEO Jordan Ellis.
+> 
+> **Jordan Ellis (CEO):** Thank you. We had a strong quarter. Revenue came in at
+> **$162 million**, up 21% year over year, and we are especially pleased that
+> Software & Services reached an all-time high of **$52 million**, now a third of the
+> business. Customer demand for warehouse automation remains robust heading into the
+> holiday peak.
+> 
+> **Priya Nair (CFO):** Thanks, Jordan. A few financial highlights. Gross margin in
+> the quarter was **43.5%**, up roughly 300 basis points year over year, again driven
+> by software mix. We ended the quarter with **$121 million** in cash. I want to
+> flag that our **quick ratio dipped to 1.18 at the end of Q3**, down from about 1.25
+> at the start of the year, as we deliberately built inventory ahead of the holiday
+> season and ahead of a planned LiDAR supplier transition. We expect inventories to
+> normalize by year end, bringing the quick ratio back above 1.2.
+> 
+> ---
+> 
+> ### Q&A
+> 
+> **Analyst (Morgan Healy, Cedar Capital):** Priya, can you talk about the inventory
+> build and what it means for your liquidity covenants?
+> 
+> **Priya Nair (CFO):** Sure. The covenant that matters here is the **current ratio
+> floor of 1.25** on our revolving facility. Our current ratio remains well above
+> that — it was about **1.6** at the end of Q3. The quick-ratio softness is a timing
+> issue tied to inventory; it is not a covenant metric, and we have ample headroom.
+> 
+> **Analyst (Sam Okafor, Birchwood Research):** On guidance — are you raising the
+> full-year outlook?
+> 
+> **Jordan Ellis (CEO):** We are nudging the top end up. We now expect full-year
+> revenue of **$605 million to $615 million**. The Software & Services momentum gives
+> us confidence.
+> 
+> **Analyst (Morgan Healy, Cedar Capital):** And the LiDAR supplier transition — any
+> risk to Q4 shipments?
+> 
+> **Jordan Ellis (CEO):** We have dual-sourced the next-generation module and built a
+> buffer stock, which is part of why inventory is elevated. We do not expect a
+> material shipment impact in Q4.
+> 
+> **Operator:** That concludes today's call. Thank you for joining.
+
+**Chunk 3** — source `acme_10k_excerpt.md`, score 0.640
+
+> # Acme Robotics, Inc. — Form 10-K (Excerpt)
+> 
+> **Fiscal Year Ended December 31, 2024**
+> 
+> > *This is a synthetic, illustrative excerpt created for the Agentic RAG lab. Acme
+> > Robotics, Inc. is a fictional company. None of the figures below represent a real
+> > filing.*
+> 
+> ## Item 1. Business
+> 
+> Acme Robotics, Inc. ("Acme," "we," or "the Company") designs, manufactures, and
+> sells industrial warehouse-automation robots and the accompanying fleet-management
+> software. Our two reportable segments are **Hardware** (autonomous mobile robots,
+> or AMRs) and **Software & Services** (the AcmeFleet subscription platform). We sell
+> primarily to large third-party logistics providers and e-commerce fulfillment
+> operators in North America and Western Europe.
+> 
+> ## Item 1A. Risk Factors (Selected)
+> 
+> - **Customer concentration.** Our three largest customers accounted for 41% of
+>   total revenue in fiscal 2024. The loss of any one of them would materially harm
+>   our results.
+> - **Supply chain.** We source high-precision LiDAR modules from a single supplier
+>   in Taiwan. A disruption would delay hardware shipments.
+> - **Liquidity and covenants.** Our revolving credit facility requires us to
+>   maintain a current ratio of at least 1.25 and a maximum net-debt-to-EBITDA ratio
+>   of 3.0. A breach could accelerate repayment.
+> 
+> ## Item 7. Management's Discussion and Analysis (MD&A)
+> 
+> ### Results of operations
+> 
+> Total revenue for fiscal 2024 was **$612.4 million**, up 18% from $519.0 million in
+> fiscal 2023. Software & Services revenue grew 34% year over year and reached
+> **$188.7 million**, or 31% of total revenue, reflecting continued adoption of the
+> AcmeFleet platform. Gross margin expanded to **43.1%** from 40.2%, driven by the
+> higher software mix.
+> 
+> Operating income was **$71.3 million** (11.6% operating margin), and net income was
+> **$48.9 million**, or **$1.92 per diluted share**.
+> 
+> ### Liquidity and capital resources
+> 
+> As of December 31, 2024, we held **$132.0 million** in cash and cash equivalents.
+> Selected balance-sheet items (in millions):
+> 
+> | Item                     | FY2024 | FY2023 |
+> |--------------------------|-------:|-------:|
+> | Current assets           |  410.0 |  351.0 |
+> | Inventories              |   96.0 |   72.0 |
+> | Current liabilities      |  255.0 |  240.0 |
+> | Total debt               |  180.0 |  165.0 |
+> | Shareholders' equity     |  402.0 |  351.0 |
+> 
+> The Company's **current ratio** at fiscal year-end 2024 was **1.61** (410.0 / 255.0),
+> comfortably above the 1.25 covenant threshold. Our **quick ratio**, which excludes
+> inventories, was **1.23** ((410.0 − 96.0) / 255.0).
+> 
+> We believe existing cash, cash flow from operations, and availability under our
+> revolving credit facility are sufficient to meet our liquidity needs for at least
+> the next twelve months.
+> 
+> ### Outlook
+> 
+> For fiscal 2025, management expects total revenue between **$700 million and $730
+> million**, with Software & Services growing faster than Hardware. We expect capital
+> expenditures of approximately $40 million, primarily for expansion of our Ohio
+> manufacturing facility.
+
+### Answer
+
+Now I have everything needed for a complete and policy-compliant determination. Here is the full analysis:
+
+---
+
+## ✅ Compliance Determination: Acme Robotics — Quick-Ratio Rule
+
+### Evidence Summary
+
+| Item | Value | Source & Period |
+|---|---|---|
+| **Acme Quick Ratio (policy-required source)** | **1.23** | FY2024 Form 10-K, year-end (Dec 31, 2024) |
+| **Acme Quick Ratio (most recent interim)** | 1.18 | Q3 FY2024 Earnings Call |
+| **Firm Policy Minimum Quick Ratio** | **1.00 (hard block)** | Birchwood Asset Management Liquidity/Counterparty Risk Policy |
+
+---
+
+### Analysis
+
+- The firm's risk policy requires the quick ratio to be verified against the **most recent annual report**, which is the **FY2024 Form 10-K**.
+- Acme's year-end quick ratio per the 10-K is **1.23**, calculated as ($410M − $96M inventories) ÷ $255M current liabilities.
+- The firm's hard-block threshold is a quick ratio **below 1.00**. Acme's 1.23 is **comfortably above** that floor.
+- The Q3 interim figure of 1.18 — while lower — is not the policy-designated reference point, and it also clears the 1.00 threshold regardless.
+
+---
+
+### ✅ Verdict: **No Policy Impediment on the Quick-Ratio Rule**
+
+A new long position in Acme Robotics is **not blocked** by the quick-ratio hard block. Acme's 1.23 (10-K, FY2024) exceeds the firm's 1.00 minimum by a margin of **+0.23**.
+
+> ⚠️ **Important caveat:** This analysis covers only the quick-ratio rule. A full pre-trade compliance check should also verify Acme's current ratio, net-debt/EBITDA covenant-awareness rules, and concentration caps — all of which are separate requirements under the firm's liquidity/counterparty risk policy. Please confirm those checks are completed before proceeding.
+
+---
+
+## Q: Does Acme's Q3 quick ratio satisfy the firm's risk policy?
+
+### Retrieved context (3 chunk(s))
+
+**Chunk 1** — source `acme_earnings_call_q3.md`, score 0.339
+
+> # Acme Robotics, Inc. — Q3 Fiscal 2024 Earnings Call Transcript (Excerpt)
+> 
+> > *Synthetic transcript created for the Agentic RAG lab. Acme Robotics, Inc. is a
+> > fictional company; quotes are illustrative.*
+> 
+> **Date:** October 24, 2024
+> **Participants:** Jordan Ellis (Chief Executive Officer), Priya Nair (Chief
+> Financial Officer), and analysts.
+> 
+> ---
+> 
+> **Operator:** Good afternoon, and welcome to Acme Robotics' third-quarter fiscal
+> 2024 earnings call. I will now turn the call over to CEO Jordan Ellis.
+> 
+> **Jordan Ellis (CEO):** Thank you. We had a strong quarter. Revenue came in at
+> **$162 million**, up 21% year over year, and we are especially pleased that
+> Software & Services reached an all-time high of **$52 million**, now a third of the
+> business. Customer demand for warehouse automation remains robust heading into the
+> holiday peak.
+> 
+> **Priya Nair (CFO):** Thanks, Jordan. A few financial highlights. Gross margin in
+> the quarter was **43.5%**, up roughly 300 basis points year over year, again driven
+> by software mix. We ended the quarter with **$121 million** in cash. I want to
+> flag that our **quick ratio dipped to 1.18 at the end of Q3**, down from about 1.25
+> at the start of the year, as we deliberately built inventory ahead of the holiday
+> season and ahead of a planned LiDAR supplier transition. We expect inventories to
+> normalize by year end, bringing the quick ratio back above 1.2.
+> 
+> ---
+> 
+> ### Q&A
+> 
+> **Analyst (Morgan Healy, Cedar Capital):** Priya, can you talk about the inventory
+> build and what it means for your liquidity covenants?
+> 
+> **Priya Nair (CFO):** Sure. The covenant that matters here is the **current ratio
+> floor of 1.25** on our revolving facility. Our current ratio remains well above
+> that — it was about **1.6** at the end of Q3. The quick-ratio softness is a timing
+> issue tied to inventory; it is not a covenant metric, and we have ample headroom.
+> 
+> **Analyst (Sam Okafor, Birchwood Research):** On guidance — are you raising the
+> full-year outlook?
+> 
+> **Jordan Ellis (CEO):** We are nudging the top end up. We now expect full-year
+> revenue of **$605 million to $615 million**. The Software & Services momentum gives
+> us confidence.
+> 
+> **Analyst (Morgan Healy, Cedar Capital):** And the LiDAR supplier transition — any
+> risk to Q4 shipments?
+> 
+> **Jordan Ellis (CEO):** We have dual-sourced the next-generation module and built a
+> buffer stock, which is part of why inventory is elevated. We do not expect a
+> material shipment impact in Q4.
+> 
+> **Operator:** That concludes today's call. Thank you for joining.
+
+**Chunk 2** — source `firm_risk_policy.md`, score 0.467
+
+> # Birchwood Asset Management — Counterparty & Liquidity Risk Policy (Excerpt)
+> 
+> > *Synthetic internal policy document created for the Agentic RAG lab. Birchwood
+> > Asset Management is a fictional firm; thresholds are illustrative and not
+> > investment advice.*
+> 
+> **Policy ID:** RISK-LIQ-007
+> **Owner:** Office of the Chief Risk Officer
+> **Last reviewed:** March 2025
+> 
+> ## 1. Purpose
+> 
+> This policy defines the minimum liquidity standards that an issuer must satisfy
+> before the firm may hold a long position in its equity or unsecured debt. It applies
+> to all actively managed portfolios.
+> 
+> ## 2. Liquidity thresholds
+> 
+> For any issuer classified as **non-financial corporate**, the analyst must verify,
+> using the issuer's most recent annual report, that:
+> 
+> - **Current ratio ≥ 1.50.** Issuers with a current ratio below 1.50 require a
+>   documented exception approved by the Risk Committee.
+> - **Quick ratio ≥ 1.00.** A quick ratio below 1.00 is a **hard block**: no new long
+>   position may be opened regardless of other factors.
+> - **Net-debt-to-EBITDA ≤ 3.5x.**
+> 
+> ## 3. Covenant awareness
+> 
+> Where an issuer discloses financial covenants on its credit facilities, the analyst
+> must record the covenant thresholds and confirm the issuer's current headroom.
+> Approaching a covenant (within 10% of the threshold) must be flagged in the position
+> memo even if the policy thresholds above are met.
+> 
+> ## 4. Concentration
+> 
+> No single issuer may exceed **5% of portfolio net asset value** at cost. Issuers
+> whose own customer concentration exceeds 40% of revenue are flagged as
+> **elevated single-name risk** and are capped at **3% of NAV**.
+> 
+> ## 5. Documentation
+> 
+> Every position memo must cite the specific figures used to evaluate Sections 2–4 and
+> name the source document and reporting period. Unsupported assertions are not
+> acceptable; if a required figure cannot be found in the issuer's disclosures, the
+> analyst must state that explicitly rather than estimate.
+
+**Chunk 3** — source `acme_10k_excerpt.md`, score 0.389
+
+> # Acme Robotics, Inc. — Form 10-K (Excerpt)
+> 
+> **Fiscal Year Ended December 31, 2024**
+> 
+> > *This is a synthetic, illustrative excerpt created for the Agentic RAG lab. Acme
+> > Robotics, Inc. is a fictional company. None of the figures below represent a real
+> > filing.*
+> 
+> ## Item 1. Business
+> 
+> Acme Robotics, Inc. ("Acme," "we," or "the Company") designs, manufactures, and
+> sells industrial warehouse-automation robots and the accompanying fleet-management
+> software. Our two reportable segments are **Hardware** (autonomous mobile robots,
+> or AMRs) and **Software & Services** (the AcmeFleet subscription platform). We sell
+> primarily to large third-party logistics providers and e-commerce fulfillment
+> operators in North America and Western Europe.
+> 
+> ## Item 1A. Risk Factors (Selected)
+> 
+> - **Customer concentration.** Our three largest customers accounted for 41% of
+>   total revenue in fiscal 2024. The loss of any one of them would materially harm
+>   our results.
+> - **Supply chain.** We source high-precision LiDAR modules from a single supplier
+>   in Taiwan. A disruption would delay hardware shipments.
+> - **Liquidity and covenants.** Our revolving credit facility requires us to
+>   maintain a current ratio of at least 1.25 and a maximum net-debt-to-EBITDA ratio
+>   of 3.0. A breach could accelerate repayment.
+> 
+> ## Item 7. Management's Discussion and Analysis (MD&A)
+> 
+> ### Results of operations
+> 
+> Total revenue for fiscal 2024 was **$612.4 million**, up 18% from $519.0 million in
+> fiscal 2023. Software & Services revenue grew 34% year over year and reached
+> **$188.7 million**, or 31% of total revenue, reflecting continued adoption of the
+> AcmeFleet platform. Gross margin expanded to **43.1%** from 40.2%, driven by the
+> higher software mix.
+> 
+> Operating income was **$71.3 million** (11.6% operating margin), and net income was
+> **$48.9 million**, or **$1.92 per diluted share**.
+> 
+> ### Liquidity and capital resources
+> 
+> As of December 31, 2024, we held **$132.0 million** in cash and cash equivalents.
+> Selected balance-sheet items (in millions):
+> 
+> | Item                     | FY2024 | FY2023 |
+> |--------------------------|-------:|-------:|
+> | Current assets           |  410.0 |  351.0 |
+> | Inventories              |   96.0 |   72.0 |
+> | Current liabilities      |  255.0 |  240.0 |
+> | Total debt               |  180.0 |  165.0 |
+> | Shareholders' equity     |  402.0 |  351.0 |
+> 
+> The Company's **current ratio** at fiscal year-end 2024 was **1.61** (410.0 / 255.0),
+> comfortably above the 1.25 covenant threshold. Our **quick ratio**, which excludes
+> inventories, was **1.23** ((410.0 − 96.0) / 255.0).
+> 
+> We believe existing cash, cash flow from operations, and availability under our
+> revolving credit facility are sufficient to meet our liquidity needs for at least
+> the next twelve months.
+> 
+> ### Outlook
+> 
+> For fiscal 2025, management expects total revenue between **$700 million and $730
+> million**, with Software & Services growing faster than Hardware. We expect capital
+> expenditures of approximately $40 million, primarily for expansion of our Ohio
+> manufacturing facility.
+
+### Answer
+
+Here is the complete compliance assessment:
+
+---
+
+## Compliance Assessment: Acme Robotics Quick Ratio
+
+### Evidence Gathered
+
+| Item | Figure | Source |
+|---|---|---|
+| **Q3 Quick Ratio** | **1.18** | Q3 FY2024 Earnings Call |
+| **Year-End Quick Ratio (FY2024)** | **1.23** | FY2024 Form 10-K (Annual Report) |
+| **Firm Policy Minimum Threshold** | **≥ 1.00** | Birchwood Asset Management Risk Policy |
+
+---
+
+### Conclusion: ✅ PASS — No Hard Block Triggered
+
+**Both the Q3 quick ratio (1.18) and the year-end quick ratio (1.23) comfortably exceed the firm's minimum threshold of 1.00.** Acme does not trigger the hard block under Birchwood's risk policy.
+
+---
+
+### Important Caveats to Note
+
+1. **Sourcing Rule:** Per the firm's risk policy, the quick ratio used in any position memo **must be drawn from the most recent annual report**, not the earnings call. The controlling figure is therefore **1.23 from the FY2024 10-K**, not the Q3 figure of 1.18.
+
+2. **Declining Trend:** The quick ratio has dipped from ~1.25 at the start of the year to 1.18 at Q3, recovering slightly to 1.23 at year-end. Management attributed the Q3 dip to an inventory build ahead of the holiday season and a LiDAR supplier transition — both described as timing-related. This trend is worth monitoring but does not currently breach policy.
+
+3. **Not a Covenant Metric:** As noted in the earnings call, the quick ratio is **not part of Acme's revolving credit facility covenants** — the relevant covenant is a current ratio floor of 1.25, which Acme satisfies at ~1.61 (Q3) and 1.61 (year-end per the 10-K).
+
+---
